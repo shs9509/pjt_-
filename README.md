@@ -215,3 +215,8 @@ class Comment_Form(forms.ModelForm):
 - 좋아요, 싫어요 폰트
 
   https://fontawesome.com/icons?d=gallery&p=2&q=thumb
+
+- heroku
+- pythonanywhere
+- lightsail
+
