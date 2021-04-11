@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
-class Review(models.Model):
+class Book(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     title = models.TextField()
     author = models.TextField()
@@ -17,7 +17,7 @@ class Review(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    Review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    Book = models.ForeignKey(Book, on_delete=models.CASCADE)
     content = models.TextField()
     rank = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     created_at = models.DateTimeField(auto_now_add=True)

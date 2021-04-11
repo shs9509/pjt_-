@@ -1,11 +1,11 @@
 from django import forms
-from .models import Review, Comment
+from .models import Book, Comment
 
 
-class Review_Form(forms.ModelForm):
+class Book_Form(forms.ModelForm):
 
     class Meta:
-        model = Review
+        model = Book
         fields = '__all__'
     
 class Comment_Form(forms.ModelForm):

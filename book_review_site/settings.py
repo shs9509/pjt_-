@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'reviews',
+    'books',
     'accounts',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,7 +56,7 @@ ROOT_URLCONF = 'book_review_site.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR/'book_review_site'/'templates',],
+        'DIRS': [BASE_DIR/ 'book_review_site' / 'templates',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Book</h1>
+  <br>
+  <br><br>
+  <h2>book</h2>
+  <a href="{% url 'books:create' %}">[create_review]</a>
+  <hr>
+  {% for book in books %}
+    제목 : <a href="{% url 'books:detail' book.pk %}">{{ book.title }}</a>
+    <br>
+    작가 : {{ book.author }}
+    <hr>
+  {% endfor %}
+{% endblock %}
