@@ -202,43 +202,106 @@ class Comment_Form(forms.ModelForm):
 
 
 
-## [04.09] 3일차
+## [04.09, 04.11] 3, 4일차
 
 
+
+### migrate
 
 ![image-20210409221041175](README.assets/image-20210409221041175.png)
 
-
-
-왜 block 이용해서 확장하려고하는데 자동완성인안되니..
-
-
+- 저번 rank에 대한 생각으로 한번 외래키로 넣어서 시도했으나 Review에서 이미 선언되지 않은 Comment의 키를 받아오는 것이 안되는 것같다.
+- 그래서 rank의 외래키는 넣어두지않고 Comment의 rank로 표현할수있을거라 생각하기 때문에 외래키는 접어두고 migrate 했다.
 
 
 
-## [04.11] 4일차
+### CRUD 구현
+
+모델을 만들었으니 책리뷰글을 **생성**, **읽기**, **업데이트**, **삭제** 하는 기능을 넣어주려고 한다.
+
+- 구현하면서 review 보다는 책에 대한 것이 중점이라고 생각해서 reviews가 아닌 books 로변경했다. 
+- accounts 를 구현하게 되면 login-required 같은 인증또한 넣을 예정이다.
 
 
 
-왜 다시 키니깐 다시되니.... 뭔가 문제엿던거니..
 
 
+- urls.py
+
+![1](README.assets/1.png)
+
+
+
+- books/views.py
+
+![2](README.assets/2.png)
+
+
+
+### html 구현
+
+views.py 까지 작성하고 나서 html를 작성하려는데 문제가 발생!
+
+html에서 base.html 확장시키려는데 `block`이 먹질 않는다.
+
+버전도 Django html로 되있고 다 정상인데 안될이유가 없는데... 스택오버플로우에서도 답을 찾지 못해서 따로 질문올리고서 다음날 다시 시도했다.
+
+그런데 뭔일있었냐는듯 다음날 그대로 해결되었다. :angry:   뭔가 문제엿던거니..
+
+
+
+![image-20210412213041114](README.assets/image-20210412213041114.png)
+
+
+
+- html 은 일단 서버에 제대로 나타는지 확인하기 위해서 값을 받고 추후에 꾸밈같은 걸 해줄 예정
+
+
+
+- create.html
+
+![3](README.assets/3.png)
+
+
+
+
+
+- detail.html
+
+![4](README.assets/4.png)
+
+
+
+- index.html
+
+![5](README.assets/5.png)
+
+
+
+- update.html
+
+![6](README.assets/6.png)
+
+
+
+### 생성된 페이지
+
+- index 페이지
 
 ![image-20210412004040315](README.assets/image-20210412004040315.png)
 
-
-
-
-
-
+- 생성 페이지
 
 ![image-20210412004107916](README.assets/image-20210412004107916.png)
 
 
 
+### 다음 계획
+
+- 디테일 페이지는 오류가 생긴다. Book_from.pk 가 존재하지 않는다는데 다음 작업때 살펴봐야할 부분이다.
+- CRUD 를 마무리 시키고 가능하면 comment 기능도 할수있다면 최대한 할것이다. comment에서 별점을 매겨서 book의 평점을 나타내야하기 때문에 이부분은 고민을 많이 하게 될것같다.
 
 
-다음 계획은 crud 마무리하고 코멘트까지 하는것으로
 
 -----------
 
