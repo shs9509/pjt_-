@@ -305,6 +305,129 @@ html에서 base.html 확장시키려는데 `block`이 먹질 않는다.
 
 -----------
 
+### [04.26] 5일차
+
+
+
+### 문제 해결
+
+Book_from.pk 가 존재하지 않는다 라는 문제를 겪었었는데 book의 pk를 'pk'로 공통적으로 바꿔준 결과 해결되어 detail 페이지를 정상적으로 확인할 수 있었다. 
+
+
+
+### index 페이지 개선 (+navbar)
+
+- 기존의 인덱스 페이지가 무엇을 나타내는지 알기 힘들었고 웹페이지상에서 무질서해 보였다.
+
+- 이를 부트스랩의 카드를 가지고 이용해 웹사이트의 책 리뷰들을 그리드 시스템을 통해서 반응형으로 될수있도록 깔끔하게 나타냈다.
+
+  - https://getbootstrap.com/docs/5.0/components/card
+
+- 리뷰 생성의 경우 버튼을 통해서 생성할수있도록 설계했다.
+
+- nav bar의 경우 필요한기능인 index 로 이동하는 'Home' 과 리뷰생성하는 'Create' 을 넣었고
+
+  회원가입과 로그인, 로그아웃은 아직 기능이없지만 추후 구현할 예정이다.
+
+- 카드안의 내용이 넘처서 이부분을 css를 이용해 일정 문장 이상 넘어가면 생략될수있도록 했다.
+
+  - 참고 : https://dheldh77.tistory.com/entry/Django-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%97%85%EB%A1%9C%EB%93%9C
+
+    
+
+![image-20210426230942816](README.assets/image-20210426230942816.png)
+
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class = "d-grid gap-2 col-4 mx-auto" style= 'margin:20px; height:50px;'>
+    <button type="button" class="btn btn-primary"><a href="{% url 'books:create'%}" class="btn" style="color: white;">Create Review</a></button>
+
+  </div> 
+  <hr>
+  <div class="container">
+    <div class="row justify-content-start">
+    {% for book in books %}
+      <div class='col-4'>
+        <div class="card mb-3" style="max-width: 540px; height: 18rem;">
+          <div class="row g-0">
+            <div class="col-md-4">
+              {% if article.image %}
+                <img src="{{ book.image.url }}" alt="{{ book.image.url }}">
+              {% endif %}
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h4 class="card-title"><a href="{% url 'books:detail' book.pk %}">{{ book.title }}</a></h4>
+                <h6 class="card-text">{{ book.author }}</h6>
+                <p class="card-text" 
+                style=" height: 10rem; line-height: 1.5;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 7;-webkit-box-orient: vertical;">{{ book.content }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+```
+
+
+
+### Detail 페이지 개선
+
+- 디테일 페이지에서 제목,저자, 작성시간을 나타낼수있게 하였다.
+- 추가적으로 구현하지 못했던 update와 delete 또한 html에 넣어 디테일 페이지에 버튼으로 작동할수있게 하였다.
+- index 페이지로 갈수있는 back 버튼을 만들었다.
+
+![image-20210426231004966](README.assets/image-20210426231004966.png)
+
+```html
+{% extends 'base.html' %}
+{% block content %}
+  <hr>
+  {% if article.image %}
+    <img src="{{ book.image }}" alt="{{ book.image }}">
+  {% endif %}
+  <p>제목 : {{ book.title }}</p>
+  <p>저자 : {{ book.author }}</p>
+  <p>내용 : {{ book.content }}</p>
+  <p>작성시각 : {{ book.created_at }}</p>
+  <hr>
+  <a href="{% url 'books:update' book.pk %}" class="btn">UPDATE</a>
+  <form action="{% url 'books:delete' book.pk %}" method="POST">
+    {% csrf_token %}
+    <button class="btn">DELETE</button>
+  </form>
+  <a href="{% url 'books:index' %}"  class="btn">Back</a>
+  <hr>
+{% endblock content %}
+```
+
+
+
+### 문제 - 이미지 업로드
+
+- 이미지를 인덱스의 카드에 보이게 하고 디테일에서 보이게 하려고했으나 에러가 일어난다.
+
+![image-20210426232122511](README.assets/image-20210426232122511.png)
+
+- 이미지파일을 찾지 못하는것 같은데 이부분 다음 프로젝트 진행 시간에 해결해보려한다.
+
+
+
+### 다음할일
+
+- 이미지 문제를 해결하면 그다음으로 로그인 로그아웃 회원가입을 구현한다.
+
+
+
+-----------
+
+
+
 ### 필요 링크
 
 - 페이지네이션

@@ -1,16 +1,34 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Book</h1>
-  <br>
-  <br><br>
-  <h2>book</h2>
-  <a href="{% url 'books:create' %}">[create_review]</a>
+  <div class = "d-grid gap-2 col-4 mx-auto" style= 'margin:20px; height:50px;'>
+    <button type="button" class="btn btn-primary"><a href="{% url 'books:create'%}" class="btn" style="color: white;">Create Review</a></button>
+
+  </div> 
   <hr>
-  {% for book in books %}
-    제목 : <a href="{% url 'books:detail' book.pk %}">{{ book.title }}</a>
-    <br>
-    작가 : {{ book.author }}
-    <hr>
-  {% endfor %}
+  <div class="container">
+    <div class="row justify-content-start">
+    {% for book in books %}
+      <div class='col-4'>
+        <div class="card mb-3" style="max-width: 540px; height: 18rem;">
+          <div class="row g-0">
+            <div class="col-md-4">
+              {% if article.image %}
+                <img src="{{ book.image.url }}" alt="{{ book.image.url }}">
+              {% endif %}
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h4 class="card-title"><a href="{% url 'books:detail' book.pk %}">{{ book.title }}</a></h4>
+                <h6 class="card-text">{{ book.author }}</h6>
+                <p class="card-text" 
+                style=" height: 10rem; line-height: 1.5;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 7;-webkit-box-orient: vertical;">{{ book.content }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    {% endfor %}
+    </div>
+  </div>
 {% endblock %}

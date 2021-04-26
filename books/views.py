@@ -13,7 +13,7 @@ def index(request):
 
 def create(request):
     if request.method == 'POST':
-        book = Book_Form(request.POST)
+        book = Book_Form(request.POST, request.FILES)
         if book.is_valid():
             book.save()
             return redirect('books:index')
@@ -24,8 +24,8 @@ def create(request):
     }
     return render(request,'books/create.html',context)
 
-def detail(request):
-    book = get_object_or_404(Book, pk= book.pk)
+def detail(request,pk):
+    book = get_object_or_404(Book, pk=pk)
     comment_form = Comment_Form()
     comments = book.comment_set.all()
     context = {
@@ -37,17 +37,17 @@ def detail(request):
 
 
 def delete(request,pk):
-    book = get_object_or_404(Review, pk= book.pk)
+    book = get_object_or_404(Book, pk= pk)
     book.delete()
     return redirect('books:index')
 
 def update(request,pk):
-    book = get_object_or_404(Book, pk = book.pk)
+    book = get_object_or_404(Book, pk = pk)
     if request.method == 'POST':
         form = Book_Form(request.POST, instance = book)
         if form.is_valid():
             form.save()
-            return redirect('books:detail', book.pk)
+            return redirect('books:detail', pk)
     else:
         form = Book_Form(instance=book)
     context={

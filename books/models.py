@@ -6,6 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Book(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    image = models.ImageField(blank=True, null=True)
     title = models.TextField()
     author = models.TextField()
     content = models.TextField()

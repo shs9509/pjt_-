@@ -1,6 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
-<form action="" method ='GET'>
-  {{ book }}
-</form>
+  <hr>
+  {% if article.image %}
+    <img src="{{ book.image }}" alt="{{ book.image }}">
+  {% endif %}
+  <p>제목 : {{ book.title }}</p>
+  <p>저자 : {{ book.author }}</p>
+  <p>내용 : {{ book.content }}</p>
+  <p>작성시각 : {{ book.created_at }}</p>
+  <hr>
+  <a href="{% url 'books:update' book.pk %}" class="btn">UPDATE</a>
+  <form action="{% url 'books:delete' book.pk %}" method="POST">
+    {% csrf_token %}
+    <button class="btn">DELETE</button>
+  </form>
+  <a href="{% url 'books:index' %}"  class="btn">Back</a>
+  <hr>
 {% endblock content %}
