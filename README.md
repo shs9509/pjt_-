@@ -422,6 +422,318 @@ Book_from.pk 가 존재하지 않는다 라는 문제를 겪었었는데 book의
 
 - 이미지 문제를 해결하면 그다음으로 로그인 로그아웃 회원가입을 구현한다.
 
+------
+
+### [04.28] 6일차
+
+
+
+### 진행상황
+
+- accounts : 로그인, 로그아웃, 회원가입 구현
+- comment : 코멘트 생성, 삭제 , 수정 구현
+- 좋아요 기능 구현중,,,,
+- 이미지 문제는 아직 해결하지 못하였다.
+
+
+
+### acccouts
+
+- accounts/urls.py
+
+```
+from django.urls import path
+from . import views
+
+app_name = 'accounts'
+
+urlpatterns = [
+    path('signup/', views.signup, name='signup'),
+    path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
+]
+```
+
+
+
+- accounts/view.py
+
+```
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth import get_user_model
+from django.views.decorators.http import require_POST
+from .forms import CustomUserCreationForm
+
+User = get_user_model()
+# Create your views here.
+def signup(request):
+    if request.user.is_authenticated:
+        return redirect('books:index')
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)
+            return redirect('books:index')
+    else:
+        form = CustomUserCreationForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'accounts/signup.html', context)
+
+def login(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            auth_login(request, form.get_user())
+            return redirect(request.GET.get('next') or 'books:index')
+    else:
+        form = AuthenticationForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'accounts/login.html', context)
+
+@require_POST
+def logout(request):
+    auth_logout(request)
+    return redirect('books:index')
+```
+
+
+
+- login.html
+
+```
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+
+{% block content %}
+  <h1>LOGIN PAGE</h1>
+  <hr>
+  <form action="" method="POST">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit">
+  </form>
+  <hr>
+  <a href="{% url 'books:index' %}">BACK</a>
+{% endblock %}
+```
+
+
+
+- signup.html
+
+```
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+
+{% block content %}
+  <h1>SIGHUP PAGE</h1>
+  <hr>
+  <form action="" method="POST">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit">
+  </form>
+  <hr>
+  <a href="{% url 'books:index' %}">BACK</a>
+{% endblock %}
+```
+
+
+
+- forms.py
+
+```
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
+
+class CustomUserCreationForm(UserCreationForm):
+    
+    class Meta:
+        model = get_user_model()
+        fields = UserCreationForm.Meta.fields
+```
+
+
+
+### 추가
+
+로그인할 유저가 생겼으므로 각 기능마다 사용에 따른 권한 제한을 걸어두었다.
+
+```
+## @require_POST
+## if request.user.is_authenticated:
+```
+
+
+
+
+
+### 결과화면
+
+- 회원가입
+
+  ![image-20210429001003890](README.assets/image-20210429001003890.png)
+
+- 로그인
+
+  ![image-20210429000945266](README.assets/image-20210429000945266.png)
+
+### 로그아웃, 로그인에 따른 Nav bar
+
+- base.html
+
+```html
+{% if request.user.is_authenticated %}
+    <li class="nav-item">
+        <form class="nav-link" action="{% url 'accounts:logout' %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Logout" class="text-Dark" style="background-color:#f8f9fa!important; outline:0; border:0;">
+        </form>
+    </li>
+{% else %}
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{% url 'accounts:signup' %}">Sign up</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{% url 'accounts:login' %}">Login</a>
+    </li>
+{% endif %}
+```
+
+
+
+
+
+![image-20210429001048736](README.assets/image-20210429001048736.png)
+
+
+
+![image-20210429001102969](README.assets/image-20210429001102969.png)
+
+-----
+
+
+
+### 코멘트
+
+- books/urls.py
+
+```
++
+    path('<int:pk>/comment', views.comments_create, name='comments_create'),
+    path('<int:pk>/like',views.likes, name='likes'),
+```
+
+
+
+- books/views.py
+
+```
++
+@require_POST
+def comments_create(request, pk):
+    if request.user.is_authenticated:
+        book = get_object_or_404(Book, pk=pk)
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.book = book
+            comment.user = request.user
+            comment.save()
+            return redirect('books:detail', book.pk)
+        context = {
+            'comment_form': comment_form,
+            'book': book,
+        }
+        return render(request, 'books/detail.html', context)
+    return redirect('accounts:login')
+
+
+@require_POST
+def likes(request,pk):
+    if request.user.is_authenticated:
+        book = get_object_or_404(Book, pk=pk)
+        if request.user in book.like_users.all():
+            book.like_users.remove(request.user)
+        else:
+            book.like_users.add(request.user)
+        return redirect('books:index')
+    return redirect('accounts:login')
+    
+```
+
+
+
+- books.model.py
+
+```
+
+```
+
+
+
+- books.form.py
+
+```
+class Book_Form(forms.ModelForm):
+
+    class Meta:
+        model = Book
+        fields = '__all__'
+        exclude = ('user','like_users',)
+    
+class Comment_Form(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        exclude = ('user', 'review',)
+```
+
+
+
+
+
+- books/detail.html
+
+```
++
+  </form>
+  <h4>댓글 목록</h4>
+  <p>{{ comments|length }}개의 댓글이 있습니다.</p>
+  <ul>
+    {% for comment in comments %}
+      <li>{{ comment.content }} {{ comment.rank }}</li>
+    {% endfor %}
+  </ul>
+  <hr>
+  <form action="{% url 'books:comments_create' book.pk %}" method="POST">
+    {% csrf_token %}
+    {% bootstrap_form comment_form %}
+    <input type="submit">
+  </form>
+```
+
+
+
+
+
+![image-20210429001149647](README.assets/image-20210429001149647.png)
+
+
+
+### 다음할일
+
+- 좋아요 기능
+- 시간이 남는다면 이미지 문제해결하기
+
 
 
 -----------

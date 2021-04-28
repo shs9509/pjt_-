@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load bootstrap5 %}
+
 {% block content %}
   <hr>
   {% if article.image %}
@@ -13,6 +15,19 @@
   <form action="{% url 'books:delete' book.pk %}" method="POST">
     {% csrf_token %}
     <button class="btn">DELETE</button>
+  </form>
+  <h4>댓글 목록</h4>
+  <p>{{ comments|length }}개의 댓글이 있습니다.</p>
+  <ul>
+    {% for comment in comments %}
+      <li>{{ comment.content }} {{ comment.rank }}</li>
+    {% endfor %}
+  </ul>
+  <hr>
+  <form action="{% url 'books:comments_create' book.pk %}" method="POST">
+    {% csrf_token %}
+    {% bootstrap_form comment_form %}
+    <input type="submit">
   </form>
   <a href="{% url 'books:index' %}"  class="btn">Back</a>
   <hr>

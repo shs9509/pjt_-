@@ -1,3 +1,4 @@
+{% load bootstrap5 %}
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -8,7 +9,6 @@
     <div>
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">B</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -20,15 +20,21 @@
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{% url 'books:create' %}">Create</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Sign up</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Login</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Logout</a>
-              </li>
+              {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                  <form class="nav-link" action="{% url 'accounts:logout' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="Logout" class="text-Dark" style="background-color:#f8f9fa!important; outline:0; border:0;">
+                  </form>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="{% url 'accounts:signup' %}">Sign up</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="{% url 'accounts:login' %}">Login</a>
+                </li>
+              {% endif %}
             </ul>
             <form class="d-flex">
               <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
