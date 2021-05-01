@@ -18,10 +18,10 @@ def create(request):
     if request.method == 'POST':
         book = Book_Form(request.POST, request.FILES)
         if book.is_valid():
-            review = form.save(commit=False)
-            review.user = request.user
-            review.save()
-            return redirect('community:detail', review.pk)
+            book = form.save(commit=False)
+            book.user = request.user
+            book.save()
+            return redirect('community:detail', book.pk)
     else:
         form = Book_Form()
     context = {
