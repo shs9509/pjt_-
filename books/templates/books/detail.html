@@ -2,33 +2,59 @@
 {% load bootstrap5 %}
 
 {% block content %}
-  <hr>
+{% if  request.user.is_authenticated %}
+  <div class="d-flex justify-content-start" style='margin: 10px;'>
+    <button href="{% url 'books:update' book.pk %}" class="btn; btn-success" >UPDATE</button>
+    <form action="{% url 'books:delete' book.pk %}" method="POST" style= 'margin:0;'>
+      {% csrf_token %}
+      <button class="btn; btn-danger">DELETE</button>
+    </form>
+  </div>
+{% endif %}
+<hr>
+<div style= 'margin:40px; height:50px; width:80%;'>
   {% if article.image %}
     <img src="{{ book.image }}" alt="{{ book.image }}">
   {% endif %}
-  <p>제목 : {{ book.title }}</p>
-  <p>저자 : {{ book.author }}</p>
-  <p>내용 : {{ book.content }}</p>
-  <p>작성시각 : {{ book.created_at }}</p>
-  <hr>
-  <a href="{% url 'books:update' book.pk %}" class="btn">UPDATE</a>
-  <form action="{% url 'books:delete' book.pk %}" method="POST">
-    {% csrf_token %}
-    <button class="btn">DELETE</button>
-  </form>
-  <h4>댓글 목록</h4>
-  <p>{{ comments|length }}개의 댓글이 있습니다.</p>
-  <ul>
+  <h4 class="fw-bold">제목</h4>
+  {{ book.title }}
+  <h4 class="fw-bold">저자</h4>
+  {{ book.author }}
+  <h4 class="fw-bold">내용</h4>
+  {{ book.content }}
+  <p class="d-flex justify-content-end">작성시각 : {{ book.created_at }}</p>
+
+  <h4 class="fw-bold">댓글 목록</h4> 
+  <p class="d-flex justify-content-end">{{ comments|length }}개의 댓글이 있습니다.</p>
+  <ul class="list-group">
     {% for comment in comments %}
-      <li>{{ comment.content }} {{ comment.rank }}</li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <div><p class="badge bg-primary rounded-pill">{{ comment.rank }}</p>    {{ comment.content }}</div>
+        </div>
+        <span>{{ comment.created_at }}</span>
+      </li>
     {% endfor %}
   </ul>
   <hr>
+  
+  {% if  request.user.is_authenticated %}
   <form action="{% url 'books:comments_create' book.pk %}" method="POST">
+    <div>
+      <h4 class="fw-bold">댓글 작성</h4> 
+      <span><input type="submit" value='제출'></span>
+    </div>
     {% csrf_token %}
     {% bootstrap_form comment_form %}
-    <input type="submit">
   </form>
-  <a href="{% url 'books:index' %}"  class="btn">Back</a>
+  {% else %}
+    <h4 class="fw-bold">댓글 작성</h4>
+    <button type="button" class="btn btn-primary"><a href="{% url 'accounts:login'%}" class="btn" style="color: white;">로그인 필요</a></button>
+  {% endif %}
   <hr>
+  <div class = "d-grid gap-2 col-4 mx-auto" style= 'margin:20px; height:50px;'>
+    <a href="{% url 'books:index'%}" class="btn btn-primary" style="color: white;">BACK</a>
+  </div> 
+</div>
+
 {% endblock content %}

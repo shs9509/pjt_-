@@ -3,14 +3,13 @@
 
 {% block content %}
   <div class = "d-grid gap-2 col-4 mx-auto" style= 'margin:20px; height:50px;'>
-    <button type="button" class="btn btn-primary"><a href="{% url 'books:create'%}" class="btn" style="color: white;">Create Review</a></button>
-
+    <a href="{% url 'books:create'%}" class="btn btn-primary" style="color: white;">Create Review</a>
   </div> 
   <hr>
-  <div class="container">
-    <div class="row justify-content-start">
+  <div class="container" style='max-width: 100%;'>
+    <div class="row justify-content-between">
     {% for book in books %}
-      <div class='col-4'>
+      <div class='col-3'>
         <div class="card mb-3" style="max-width: 540px; height: 18rem;">
           <div class="row g-0">
             <div class="col-md-4">
@@ -28,6 +27,15 @@
             </div>
           </div>
         </div>
+        <form action="{% url 'books:likes' book.pk %}" method = "POST">
+          {% csrf_token %}
+          {% if request.user in book.like_user.all %}
+            <button style='background-color:white; border:0;'><i class="fas fa-thumbs-up fa-1x" style="color:tomato;"></i></button>
+          {% else %}
+            <button style='background-color:white; border:0;'><i class="far fa-thumbs-up fa-1x" style="color:tomato;"></i></button>
+          {% endif %}
+          {{ book.like_user.all|length }}명이 이글을 좋아합니다.
+        </form>
       </div>  
     {% endfor %}
     </div>

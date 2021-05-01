@@ -6,10 +6,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Book(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
-    image = models.ImageField(blank=True, null=True)
     title = models.TextField()
-    author = models.TextField()
+    author = models.TextField(max_length=50)
     content = models.TextField()
+    image = models.ImageField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     like_user = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='like_book')
     
@@ -18,9 +18,9 @@ class Book(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    Book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
     content = models.TextField()
-    rank = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rank = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

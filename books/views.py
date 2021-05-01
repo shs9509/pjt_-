@@ -18,10 +18,10 @@ def create(request):
     if request.method == 'POST':
         book = Book_Form(request.POST, request.FILES)
         if book.is_valid():
-            book = form.save(commit=False)
+            book = book.save(commit=False)
             book.user = request.user
             book.save()
-            return redirect('community:detail', book.pk)
+            return redirect('books:detail', book.pk)
     else:
         form = Book_Form()
     context = {
@@ -70,7 +70,7 @@ def update(request,pk):
 def comments_create(request, pk):
     if request.user.is_authenticated:
         book = get_object_or_404(Book, pk=pk)
-        comment_form = CommentForm(request.POST)
+        comment_form = Comment_Form(request.POST)
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
             comment.book = book
@@ -86,12 +86,12 @@ def comments_create(request, pk):
 
 
 @require_POST
-def likes(request,pk):
+def likes(request,book_pk):
     if request.user.is_authenticated:
-        book = get_object_or_404(Book, pk=pk)
-        if request.user in book.like_users.all():
-            book.like_users.remove(request.user)
+        book = get_object_or_404(Book, pk=book_pk)
+        if request.user in book.like_user.all():
+            book.like_user.remove(request.user)
         else:
-            book.like_users.add(request.user)
+            book.like_user.add(request.user)
         return redirect('books:index')
     return redirect('accounts:login')

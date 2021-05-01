@@ -39,4 +39,4 @@ def login(request):
 @require_POST
 def logout(request):
     auth_logout(request)
-    return redirect('book:index')
+    return redirect('books:index')

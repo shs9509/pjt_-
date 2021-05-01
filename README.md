@@ -424,14 +424,14 @@ Book_from.pk 가 존재하지 않는다 라는 문제를 겪었었는데 book의
 
 ------
 
-### [04.28] 6일차
 
 
+## [04.28] 6일차
 
 ### 진행상황
 
 - accounts : 로그인, 로그아웃, 회원가입 구현
-- comment : 코멘트 생성, 삭제 , 수정 구현
+- comment : 코멘트 생성 폼 구현
 - 좋아요 기능 구현중,,,,
 - 이미지 문제는 아직 해결하지 못하였다.
 
@@ -674,7 +674,15 @@ def likes(request,pk):
 - books.model.py
 
 ```
+class Comment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    content = models.TextField()
+    rank = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.content
 ```
 
 
@@ -723,7 +731,7 @@ class Comment_Form(forms.ModelForm):
 
 
 
-
+- detail 페이지
 
 ![image-20210429001149647](README.assets/image-20210429001149647.png)
 
@@ -734,7 +742,304 @@ class Comment_Form(forms.ModelForm):
 - 좋아요 기능
 - 시간이 남는다면 이미지 문제해결하기
 
+-------
 
+
+
+## [05.01] 7일차
+
+### 진행상황
+
+- 좋아요 구현
+- index 페이지 반응형레이아웃 새로적용
+- create 생성문제 해결, 페이지 디자인 변경
+- detail 페이지 디자인 변경
+- 코멘트 생성 기능
+
+---------
+
+### 좋아요 기능
+
+1. 좋아요 기능을 위해서 모델의 like_user를 참조해서 인덱스 페이지에 좋아요 기능과 좋아요 개수를 나타낼수있도록 구현했다.
+2. 파비콘을 이용해서 좋아요를 표현
+
+- view.py
+
+```python
+@require_POST
+def likes(request,book_pk):
+    if request.user.is_authenticated:
+        book = get_object_or_404(Book, pk=book_pk)
+        if request.user in book.like_user.all():
+            book.like_user.remove(request.user)
+        else:
+            book.like_user.add(request.user)
+        return redirect('books:index')
+    return redirect('accounts:login')
+```
+
+
+
+------------
+
+### index page
+
+1. 마진값과 flex관한 class를 다루어서 한페이지에 꽉차게 책의 리뷰를 볼수있게 만들었다.
+2. 반응형으로 한줄에 4개씩 리뷰를 배치
+3. 좋아요는 리뷰카드 밑에 나타나도록 배치
+
+- index.html
+
+```html
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+
+{% block content %}
+  <div class = "d-grid gap-2 col-4 mx-auto" style= 'margin:20px; height:50px;'>
+    <a href="{% url 'books:create'%}" class="btn btn-primary" style="color: white;">Create Review</a>
+  </div> 
+  <hr>
+  <div class="container" style='max-width: 100%;'>
+    <div class="row justify-content-between">
+    {% for book in books %}
+      <div class='col-3'>
+        <div class="card mb-3" style="max-width: 540px; height: 18rem;">
+          <div class="row g-0">
+            <div class="col-md-4">
+              {% if article.image %}
+                <img src="{{ book.image.url }}" alt="{{ book.image.url }}">
+              {% endif %}
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h4 class="card-title"><a href="{% url 'books:detail' book.pk %}">{{ book.title }}</a></h4>
+                <h6 class="card-text">{{ book.author }}</h6>
+                <p class="card-text" 
+                style=" height: 10rem; line-height: 1.5;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 7;-webkit-box-orient: vertical;">{{ book.content }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form action="{% url 'books:likes' book.pk %}" method = "POST">
+          {% csrf_token %}
+          {% if request.user in book.like_user.all %}
+            <button style='background-color:white; border:0;'><i class="fas fa-thumbs-up fa-1x" style="color:tomato;"></i></button>
+          {% else %}
+            <button style='background-color:white; border:0;'><i class="far fa-thumbs-up fa-1x" style="color:tomato;"></i></button>
+          {% endif %}
+          {{ book.like_user.all|length }}명이 이글을 좋아합니다.
+        </form>
+      </div>  
+    {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+```
+
+- index page
+
+  ![image-20210502030922150](README.assets/image-20210502030922150-1619895201372.png)
+
+  
+
+-------
+
+### create page
+
+1. 위젯을 사용함으로써 전에 지저분하더 폼의 형태를 가꾸었다.
+2. 부트스트랩의 내용을 참고해서 전체적인 페이지의 완성도를 높임 
+
+- form.py
+
+```python
+ class Book_Form(forms.ModelForm):
+   class Meta:
+        model = Book
+        fields = ('title','author', 'content','image')
+        widgets = {
+            'title': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'title'
+                }
+            ),
+            'author': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'author'
+                }
+            ),
+            'content': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'content',
+                }
+            ),
+        }
+```
+
+- create.html
+
+```html
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+
+{% block content %}
+  <form action="" method = 'POST' enctype="multipart/form-data" style= 'margin:40px; height:50px; width:80%;'>
+    {% csrf_token %}
+     {{form.as_p}}
+    </div>
+    <div class = "d-grid gap-2 col-4 mx-auto" style= 'margin:20px; height:50px;'>
+      <input type="submit", class="btn btn-primary" value='제출'>
+    </div> 
+  </form>
+
+{% endblock content %}
+```
+
+- create page
+
+  ![image-20210502030906127](README.assets/image-20210502030906127-1619895199223.png)
+
+  
+
+-------
+
+### detail page
+
+1. 부트스트랩의 내용을 참고해서 전체적인 페이지의 완성도를 높임 
+2. delete와 update의 경우 로그한 사람에게만 보이도록 하였다.
+
+- detail.html
+
+```html
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+
+{% block content %}
+{% if  request.user.is_authenticated %}
+  <div class="d-flex justify-content-start" style='margin: 10px;'>
+    <button href="{% url 'books:update' book.pk %}" class="btn; btn-success" >UPDATE</button>
+    <form action="{% url 'books:delete' book.pk %}" method="POST" style= 'margin:0;'>
+      {% csrf_token %}
+      <button class="btn; btn-danger">DELETE</button>
+    </form>
+  </div>
+{% endif %}
+<hr>
+<div style= 'margin:40px; height:50px; width:80%;'>
+  {% if article.image %}
+    <img src="{{ book.image }}" alt="{{ book.image }}">
+  {% endif %}
+  <h4 class="fw-bold">제목</h4>
+  {{ book.title }}
+  <h4 class="fw-bold">저자</h4>
+  {{ book.author }}
+  <h4 class="fw-bold">내용</h4>
+  {{ book.content }}
+  <p class="d-flex justify-content-end">작성시각 : {{ book.created_at }}</p>
+
+{% endblock content %}
+
+```
+
+- detail page
+
+  - 로그인 버전
+
+  ![image-20210502030954043](README.assets/image-20210502030954043-1619895197245.png)
+
+  - 로그아웃 버전
+
+  ![image-20210502031253773](README.assets/image-20210502031253773-1619895195923.png)
+
+-----------
+
+
+
+### comment
+
+1.  저번에 코멘트 폼을 만들고 나서 기능의 작동을 해봤으나 문제가 있었고 이를 해결함으로서 코멘트의 기능을 정상적으로 구현
+2. 코멘트의 갯수를 나타내고, 내용과 점수를 입력할수있게 하였다.
+3. 코멘트 생성시 부트스트랩의 뱃지를 이용해 점수를 나타내었고 다음엔 댓글내용, 작성시간을 나타냈다.
+
+- form.py
+
+```python
+class Comment_Form(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        exclude = ('user','book',)
+        widgets = {
+            'content': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'content',
+                }
+            ),
+            'rank': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': '0 ~ 5'
+                }
+            ),
+        }
+```
+
+- detail.html
+
+```html
+  <h4 class="fw-bold">댓글 목록</h4> 
+  <p class="d-flex justify-content-end">{{ comments|length }}개의 댓글이 있습니다.</p>
+  <ul class="list-group">
+    {% for comment in comments %}
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <div><p class="badge bg-primary rounded-pill">{{ comment.rank }}</p>    {{ comment.content }}</div>
+        </div>
+        <span>{{ comment.created_at }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+  <hr>
+  
+  {% if  request.user.is_authenticated %}
+  <form action="{% url 'books:comments_create' book.pk %}" method="POST">
+    <div>
+      <h4 class="fw-bold">댓글 작성</h4> 
+      <span><input type="submit" value='제출'></span>
+    </div>
+    {% csrf_token %}
+    {% bootstrap_form comment_form %}
+  </form>
+  {% else %}
+    <h4 class="fw-bold">댓글 작성</h4>
+    <button type="button" class="btn btn-primary"><a href="{% url 'accounts:login'%}" class="btn" style="color: white;">로그인 필요</a></button>
+  {% endif %}
+  <hr>
+  <div class = "d-grid gap-2 col-4 mx-auto" style= 'margin:20px; height:50px;'>
+    <a href="{% url 'books:index'%}" class="btn btn-primary" style="color: white;">BACK</a>
+  </div> 
+</div>
+```
+
+
+
+- detali page
+
+  ![image-20210502030954043](README.assets/image-20210502030954043-1619895192896.png)
+
+----------
+
+### 다음 할일
+
+- 거의 끝나간다...
+- 댓글의 점수의 평균을 구해서 책의 평점을 인덱스와 리뷰 페이지에 나타내야한다.
+- 로그인과 회원가입 페이지가 아직 난잡하다 조정해줘야 한다.
+- 먼저 기능을 구현해야 한다 생각했기 때문에 아직 이미지 문제를 다루지않았다.
+- 가능하다면 싫어요도 만들까 생각중이다.
 
 -----------
 
@@ -751,6 +1056,10 @@ class Comment_Form(forms.ModelForm):
   https://fontawesome.com/icons?d=gallery&p=2&q=thumb
 
 - heroku
+
 - pythonanywhere
+
 - lightsail
+
+- https://fenderist.tistory.com/369
 
