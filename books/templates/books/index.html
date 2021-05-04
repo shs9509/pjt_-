@@ -27,6 +27,15 @@
             </div>
           </div>
         </div>
+        <h4 >
+          <p class="badge bg-primary rounded-pill">
+          {% if avg_rank.rank__avg  %}
+            {{ avg_rank.rank__avg }}점
+          {% else %}
+            X
+          {% endif %}
+          </p>
+        </h4>
         <form action="{% url 'books:likes' book.pk %}" method = "POST">
           {% csrf_token %}
           {% if request.user in book.like_user.all %}

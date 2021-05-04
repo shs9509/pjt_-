@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Count, Avg
 from .models import Book, Comment
 from .forms import Book_Form, Comment_Form
 
@@ -8,6 +9,7 @@ from .forms import Book_Form, Comment_Form
 
 def index(request):
     books = Book.objects.order_by('-pk')
+    avg_rank = book.comment_set.all().aggregate(Avg('rank'))
     context = {
         'books': books,
     }
@@ -34,10 +36,12 @@ def detail(request,pk):
     book = get_object_or_404(Book, pk=pk)
     comment_form = Comment_Form()
     comments = book.comment_set.all()
+    avg_rank = book.comment_set.all().aggregate(Avg('rank'))
     context = {
         'book' : book,
         'comment_form' : comment_form,
         'comments' : comments,
+        'avg_rank' : avg_rank,
     }
     return render(request, 'books/detail.html', context )
 
