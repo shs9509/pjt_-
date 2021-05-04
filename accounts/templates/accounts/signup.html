@@ -2,13 +2,13 @@
 {% load bootstrap5 %}
 
 {% block content %}
-  <h1>SIGHUP PAGE</h1>
-  <hr>
-  <form action="" method="POST">
-    {% csrf_token %}
-    {% bootstrap_form form %}
-    <input type="submit">
-  </form>
-  <hr>
-  <a href="{% url 'books:index' %}">BACK</a>
+  <div class = 'd-flex justify-content-center'>
+    <form action="" method="POST" style= 'margin-top:5%; height:50px; width:60%;'>
+      <h1>Sign up</h1>
+      <hr>
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      <input class="btn btn-primary" style="color: white;" type="submit" >
+    </form>
+  </div>
 {% endblock %}

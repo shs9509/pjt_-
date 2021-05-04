@@ -9,7 +9,6 @@ from .forms import Book_Form, Comment_Form
 
 def index(request):
     books = Book.objects.order_by('-pk')
-    avg_rank = book.comment_set.all().aggregate(Avg('rank'))
     context = {
         'books': books,
     }
@@ -56,13 +55,16 @@ def delete(request,pk):
 @login_required
 def update(request,pk):
     book = get_object_or_404(Book, pk = pk)
-    if request.method == 'POST':
-        form = Book_Form(request.POST, instance = book)
-        if form.is_valid():
-            form.save()
-            return redirect('books:detail', pk)
+    if request.user == book.user:
+        if request.method == 'POST':
+            form = Book_Form(request.POST, instance = book)
+            if form.is_valid():
+                form.save()
+                return redirect('books:detail', book.pk)
+        else:
+            form = Book_Form(instance=book)
     else:
-        form = Book_Form(instance=book)
+        return redirect('books:index')
     context={
         'form' : form,
         'book' : book,

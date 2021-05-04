@@ -9,7 +9,7 @@ class Book(models.Model):
     title = models.TextField()
     author = models.TextField(max_length=50)
     content = models.TextField()
-    image = models.ImageField(blank=True, null=True)
+    image = models.ImageField(upload_to='image/',blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     like_user = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='like_book')
     

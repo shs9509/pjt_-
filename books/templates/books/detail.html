@@ -3,21 +3,23 @@
 
 {% block content %}
 {% if  request.user.is_authenticated %}
-  <div class="d-flex justify-content-start" style='margin: 10px;'>
-    <button href="{% url 'books:update' book.pk %}" class="btn; btn-success" >UPDATE</button>
-    <form action="{% url 'books:delete' book.pk %}" method="POST" style= 'margin:0;'>
-      {% csrf_token %}
-      <button class="btn; btn-danger">DELETE</button>
-    </form>
-  </div>
+  {% if request.user == book.user %}
+    <div class="d-flex justify-content-start" style='margin: 10px;'>
+      <a href="{% url 'books:update' book.pk %}" class="btn; btn-success " style='text-decoration-line: none; '>UPDATE</a>
+      <form action="{% url 'books:delete' book.pk %}" method="POST" style= 'margin:0;'>
+        {% csrf_token %}
+        <button class="btn; btn-danger">DELETE</button>
+      </form>
+    </div>
+  {% endif %}
 {% endif %}
 <hr>
 <div style= 'margin:40px; height:50px; width:80%;'>
-  <h4 ><p class="badge bg-primary rounded-pill">
+  <h4 class="fw-bold" >평점:<p class="badge bg-primary rounded-pill">
   {% if avg_rank.rank__avg  %}
-    평점:{{ avg_rank.rank__avg }}
+    {{ avg_rank.rank__avg|floatformat:"1" }}
   {% else %}
-    평점:없음
+    없음
   {% endif %}
   </p></h4>
   

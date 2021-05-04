@@ -9,13 +9,13 @@ User = get_user_model()
 # Create your views here.
 def signup(request):
     if request.user.is_authenticated:
-        return redirect('book:index')
+        return redirect('books:index')
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             auth_login(request, user)
-            return redirect('book:index')
+            return redirect('books:index')
     else:
         form = CustomUserCreationForm()
     context = {
@@ -28,7 +28,7 @@ def login(request):
         form = AuthenticationForm(request, request.POST)
         if form.is_valid():
             auth_login(request, form.get_user())
-            return redirect(request.GET.get('next') or 'book:index')
+            return redirect(request.GET.get('next') or 'books:index')
     else:
         form = AuthenticationForm()
     context = {

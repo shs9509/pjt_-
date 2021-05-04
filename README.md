@@ -1053,9 +1053,23 @@ class Comment_Form(forms.ModelForm):
 
 그러면 ORM 이용해서 평균값을 보여주자
 
+쿼리셋을 이용해서 aggregate를 통해서 일시적으로 평균값을 도출해낼수있다.
+
+if문을 이용해서 None 값인경우 없음으로 나타나게 함
+
+그런데 인덱스에서 나타내려면 어떻게 해야할까.
 
 
 
+바로 클릭시변경할수있게 변경
+
+로그인 회원가입 페이지 변경
+
+
+
+아 이미지 문제는 도저히 해결이 안되서 스택오버플로우에 질문을 올렸다.
+
+https://stackoverflow.com/questions/67389675/why-cant-i-upload-a-image-by-django#comment119114832_67389675
 
 
 
@@ -1078,4 +1092,8 @@ class Comment_Form(forms.ModelForm):
 - lightsail
 
 - https://fenderist.tistory.com/369
+
+- 장고 소수점 넣기
+
+- https://pythonq.com/so/django/156037
 
