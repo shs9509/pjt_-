@@ -9,9 +9,10 @@ class Book(models.Model):
     title = models.TextField()
     author = models.TextField(max_length=50)
     content = models.TextField()
-    image = models.ImageField(upload_to='image/',blank=True, null=True)
+    image = models.ImageField(upload_to="images/",blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     like_user = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='like_book')
+
     
     def __str__(self):
         return self.title
@@ -25,3 +26,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+

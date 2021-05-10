@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count, Avg
 from .models import Book, Comment
@@ -53,11 +53,12 @@ def delete(request,pk):
 
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 def update(request,pk):
     book = get_object_or_404(Book, pk = pk)
     if request.user == book.user:
         if request.method == 'POST':
-            form = Book_Form(request.POST, instance = book)
+            form = Book_Form(request.POST,request.FILES, instance = book)
             if form.is_valid():
                 form.save()
                 return redirect('books:detail', book.pk)

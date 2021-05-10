@@ -7,23 +7,23 @@
   </div> 
   <hr>
   <div class="container" style='max-width: 100%;'>
-    <div class="row justify-content-between">
+    <div class="row justify-content-even">
     {% for book in books %}
-      <div class='col-3'>
-        <div class="card mb-3" style="max-width: 540px; height: 18rem;">
+      <div class='col-12 col-md-3'>
+        <div class="card mb-3" style="max-width: 540px;">
           <a href="{% url 'books:detail' book.pk %}"  style='text-decoration-line: none; color:black;'>
             <div class="row g-0">
-              <div class="col-md-4">
-                {% if article.image %}
-                  <img src="{{ book.image.url }}" alt="{{ book.image.url }}">
+              <div class="col-md-4" >
+                {% if book.image %}
+                  <img src="{{ book.image.url }}" alt="{{ book.image.url }}" class="col-12">
                 {% endif %}
               </div>
               <div class="col-md-8">
                 <div class="card-body">
                   <h4 class="card-title">{{ book.title }}</h4>
                   <h6 class="card-text">{{ book.author }}</h6>
-                  <p class="card-text" 
-                  style=" height: 10rem; line-height: 1.5;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 7;-webkit-box-orient: vertical;">{{ book.content }}</p>
+                  <p class="card-text col-12" 
+                  style="height: 12rem; line-height: 1.5;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 8;-webkit-box-orient: vertical;">{{ book.content }}</p>
                 </div>
               </div>
             </div>

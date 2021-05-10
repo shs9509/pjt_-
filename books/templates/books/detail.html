@@ -22,18 +22,23 @@
     없음
   {% endif %}
   </p></h4>
-  
-  {% if article.image %}
-    <img src="{{ book.image }}" alt="{{ book.image }}">
-  {% endif %}
-  <h4 class="fw-bold">제목</h4>
-  {{ book.title }}
-  <h4 class="fw-bold">저자</h4>
-  {{ book.author }}
-  <h4 class="fw-bold">내용</h4>
-  {{ book.content }}
+  <div class='d-flex flex-row' sytle='margin:10px'>
+    {% if book.image %}
+      <img src="{{ book.image.url }}" alt="{{ book.image.url }}" style='margin-right:20px; margin-top:0px; max-width:20%; height:auto;'>
+    {% endif %}
+    <div style='margin-top:2.5%'>
+      <h4 class="fw-bold">제목</h4>
+      {{ book.title }}
+      <p></p>
+      <h4 class="fw-bold">저자</h4>
+      {{ book.author }}
+      <hr>
+      <h4 class="fw-bold">내용</h4>
+      {{ book.content }}
+    </div>
+  </div>
   <p class="d-flex justify-content-end">작성시각 : {{ book.created_at }}</p>
-
+  <hr>
   <h4 class="fw-bold">댓글 목록</h4> 
   <p class="d-flex justify-content-end">{{ comments|length }}개의 댓글이 있습니다.</p>
   <ul class="list-group">
