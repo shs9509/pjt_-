@@ -9,8 +9,8 @@
   <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
       <a href="{% url 'books:index' %}"><button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">All</button>
-    {% for genre in genres %}
-      <a href="{% url 'books:genre' genre %}"><button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ genre }}</button></a>
+    {% for book in books %}
+      <a href="{% url 'books:genre' book.genre %}"><button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ book.genre }}</button></a>
     {% endfor %}
     </div>
   </nav>

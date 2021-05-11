@@ -20,6 +20,12 @@ class Book_Form(forms.ModelForm):
                     'placeholder': 'author'
                 }
             ),
+            'genre': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'genre'
+                }
+            ),
             'content': forms.TextInput(
                 attrs={
                     'class': 'form-control',

@@ -9,10 +9,20 @@ from .forms import Book_Form, Comment_Form
 
 def index(request):
     books = Book.objects.order_by('-pk')
+    genres = Book.objects.all().order_by('-genre').value_list('genre', flat=True).distinct()
     context = {
         'books': books,
+        'genres':genres,
     }
     return render(request, 'books/index.html', context)
+
+def genre(request,book_genre):
+    books = Book.objects.order_by('-pk')
+    context = {
+        'books': books,
+        'book_genre':book_genre,
+    }
+    return render(request,'books/genre.html',context)
 
 @login_required
 def create(request):
