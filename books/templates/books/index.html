@@ -7,17 +7,13 @@
   </div> 
   <hr>
   <nav>
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-      <a href="{% url 'books:index' %}"><button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">All</button>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist" style='margin:10px'>
+      <button class="nav-link active"  onclick="location.href='{% url 'books:index' %}'" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true"><b>All</b></button>
     {% for genre in genres %}
-      <a href="{% url 'books:genre' genre %}"><button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ genre }}</button></a>
+      <button class="nav-link active" onclick="location.href='{% url 'books:genre' genre %}'" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ genre }}</button></a>
     {% endfor %}
     </div>
   </nav>
-  {% comment %} {% for book in books %}
-    <div class="tab-content" id="nav-tabContent">
-      <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">...</div>
-    </div> {% endcomment %}
 
   <div class="container" style='max-width: 100%;'>
     <div class="row justify-content-even">
@@ -49,7 +45,7 @@
           {% else %}
             <button style='background-color:white; border:0;'><i class="far fa-thumbs-up fa-1x" style="color:tomato;"></i></button>
           {% endif %}
-          {{ book.like_user.all|length }}명이 이글을 좋아합니다.
+          {{ book.like_user.all|length }}명이 이책을 좋아합니다.
         </form>
       </div>  
     {% endfor %}

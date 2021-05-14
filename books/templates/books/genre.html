@@ -7,51 +7,53 @@
   </div> 
   <hr>
   <nav>
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-      <a href="{% url 'books:index' %}"><button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">All</button>
-    {% for book in books %}
-      <a href="{% url 'books:genre' book.genre %}"><button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ book.genre }}</button></a>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist" style='margin:10px'>
+      <button class="nav-link active"  onclick="location.href='{% url 'books:index' %}'" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">All</button>
+    {% for genre in genres %}
+      {% if genre == book_genre %}
+        <button class="nav-link active" onclick="location.href='{% url 'books:genre' genre %}'" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true"><b>{{ genre }}</b></button></a>
+      {% else %}
+        <button class="nav-link active" onclick="location.href='{% url 'books:genre' genre %}'" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ genre }}</button></a>
+      {% endif %}
     {% endfor %}
     </div>
   </nav>
-  {% comment %} {% for book in books %}
-    <div class="tab-content" id="nav-tabContent">
-      <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">...</div>
-    </div> {% endcomment %}
 
   <div class="container" style='max-width: 100%;'>
     <div class="row justify-content-even">
     {% for book in books %}
-      <div class='col-12 col-md-3'>
-        <div class="card mb-3" style="max-width: 540px;">
-          <a href="{% url 'books:detail' book.pk %}"  style='text-decoration-line: none; color:black;'>
-            <div class="row g-0">
-              <div class="col-md-4" >
-                {% if book.image %}
-                  <img src="{{ book.image.url }}" alt="{{ book.image.url }}" class="col-12">
-                {% endif %}
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <h4 class="card-title">{{ book.title }}</h4>
-                  <h6 class="card-text">{{ book.author }}</h6>
-                  <p class="card-text col-12" 
-                  style="height: 12rem; line-height: 1.5;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 8;-webkit-box-orient: vertical;">{{ book.content }}</p>
+      {% if book.genre == book_genre %}
+        <div class='col-12 col-md-3'>
+          <div class="card mb-3" style="max-width: 540px;">
+            <a href="{% url 'books:detail' book.pk %}"  style='text-decoration-line: none; color:black;'>
+              <div class="row g-0">
+                <div class="col-md-4" >
+                  {% if book.image %}
+                    <img src="{{ book.image.url }}" alt="{{ book.image.url }}" class="col-12">
+                  {% endif %}
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <h4 class="card-title">{{ book.title }}</h4>
+                    <h6 class="card-text">{{ book.author }}</h6>
+                    <p class="card-text col-12" 
+                    style="height: 12rem; line-height: 1.5;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 8;-webkit-box-orient: vertical;">{{ book.content }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </a>
+            </a>
+          </div>
+          <form action="{% url 'books:likes' book.pk %}" method = "POST">
+            {% csrf_token %}
+            {% if request.user in book.like_user.all %}
+              <button style='background-color:white; border:0;'><i class="fas fa-thumbs-up fa-1x" style="color:tomato;"></i></button>
+            {% else %}
+              <button style='background-color:white; border:0;'><i class="far fa-thumbs-up fa-1x" style="color:tomato;"></i></button>
+            {% endif %}
+            {{ book.like_user.all|length }}명이 이책을 좋아합니다.
+          </form>
         </div>
-        <form action="{% url 'books:likes' book.pk %}" method = "POST">
-          {% csrf_token %}
-          {% if request.user in book.like_user.all %}
-            <button style='background-color:white; border:0;'><i class="fas fa-thumbs-up fa-1x" style="color:tomato;"></i></button>
-          {% else %}
-            <button style='background-color:white; border:0;'><i class="far fa-thumbs-up fa-1x" style="color:tomato;"></i></button>
-          {% endif %}
-          {{ book.like_user.all|length }}명이 이글을 좋아합니다.
-        </form>
-      </div>  
+      {% endif %}  
     {% endfor %}
     </div>
   </div>

@@ -1328,7 +1328,12 @@ https://stackoverflow.com/questions/67389675/why-cant-i-upload-a-image-by-django
 
 
 
+### 분류 탭
 
+- 어떻게 구현해야할까
+  - 
+
+![image-20210514230148334](README.assets/image-20210514230148334.png)
 
 장르 추가 하려면 무엇을 어떻게 해야할까???
 
@@ -1364,11 +1369,134 @@ yes24의 카테고리마다 주어지는 url
 
 
 
+```html
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <a href="{% url 'books:index' %}"><button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">All</button>
+    {% for genre in genres %}
+      <a href="{% url 'books:genre' genre %}"><button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ genre }}</button></a>
+    {% endfor %}
+    </div>
+  </nav>
+  {% comment %} {% for book in books %}
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">...</div>
+    </div> {% endcomment %}
+```
+
+```python
+def index(request):
+    books = Book.objects.order_by('-pk')
+    genres = Book.objects.all().order_by('-genre').value_list('genre', flat=True).distinct()
+    context = {
+        'books': books,
+        'genres':genres,
+    }
+    return render(request, 'books/index.html', context)
+
+def genre(request,book_genre):
+    books = Book.objects.order_by('-pk')
+    context = {
+        'books': books,
+        'book_genre':book_genre,
+    }
+    return render(request,'books/genre.html',context)
+```
+
+
+
 책의 장르에대해 미리 중복없는데이터를 만들고 그거를 보내준다.
 
 는 에러
 
 ![image-20210512002436264](README.assets/image-20210512002436264.png)
+
+
+
+
+
+## [05.14] 12일차
+
+
+
+### 진행상황
+
+- 분류탭 완성
+- 인덱스에서 평점 뱃지 생성중(?) -포기
+
+
+
+### 분류탭
+
+- 전에 있던 문제를 해결했다. 
+- value 가 아니라 values엿다..
+
+그러자 1탭을 하나로 만들수있었고
+
+
+
+- views.py  
+
+```python
+def index(request):
+    books = Book.objects.order_by('-pk')
+    genres = Book.objects.all().order_by('-genre').values_list('genre', flat=True).distinct()
+    context = {
+        'books': books,
+        'genres':genres,
+    }
+    return render(request, 'books/index.html', context)
+
+def genre(request,book_genre):
+    books = Book.objects.order_by('-pk')
+    genres = Book.objects.all().order_by('-genre').values_list('genre', flat=True).distinct()
+    context = {
+        'books': books,
+        'genres':genres,
+        'book_genre':book_genre,
+    }
+    return render(request,'books/genre.html',context)
+```
+
+
+
+- index.html
+
+```html
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist" style='margin:10px'>
+        <button class="nav-link active"  onclick="location.href='{% url 'books:index' %}'" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true"><b>All</b></button>
+        {% for genre in genres %}
+        <button class="nav-link active" onclick="location.href='{% url 'books:genre' genre %}'" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ genre }}</button></a>
+        {% endfor %}
+    </div>
+</nav>
+```
+
+
+
+
+
+
+
+![image-20210514224557899](README.assets/image-20210514224557899.png)
+
+
+
+![image-20210514224543802](README.assets/image-20210514224543802.png)
+
+
+
+![image-20210514224625297](README.assets/image-20210514224625297.png)
+
+
+
+
+
+### 다음할일
+
+- 점검이후 이상없을시
+- 배포
 
 
 

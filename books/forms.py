@@ -6,7 +6,7 @@ class Book_Form(forms.ModelForm):
 
     class Meta:
         model = Book
-        fields = ('title','author', 'content','image')
+        fields = ('title','author','genre','content','image')
         widgets = {
             'title': forms.TextInput(
                 attrs={
