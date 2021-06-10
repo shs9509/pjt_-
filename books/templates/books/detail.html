@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load bootstrap5 %}
+{% load bootstrap4 %}
 
 {% block content %}
 {% if  request.user.is_authenticated %}
@@ -48,7 +48,11 @@
     {% for comment in comments %}
       <li class="list-group-item d-flex justify-content-between align-items-start">
         <div class="ms-2 me-auto">
-          <div><p class="badge bg-primary rounded-pill">{{ comment.rank }}</p>    {{ comment.content }}</div>
+          <ul class="list-group list-group-horizontal">
+            <li class="list-group-item"><p class="badge bg-primary rounded-pill" style="margin:auto">{{ comment.rank }}</p></li>
+            <li class="list-group-item" style="margin:auto">{{ comment.user }}</li>
+            <li style="margin:auto">  {{ comment.content }}</li>
+          </ul>
         </div>
         <span>{{ comment.created_at }}</span>
       </li>

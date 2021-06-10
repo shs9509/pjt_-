@@ -25,7 +25,8 @@ SECRET_KEY = 't@*ui))m5+@ioh1_c(xwykz7_8vgiup0dz@sp55b1__qb+xez5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+]
 
 
 # Application definition
@@ -33,7 +34,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'books',
     'accounts',
-    'bootstrap5',
+    'bootstrap4',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -127,5 +128,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 AUTH_USER_MODEL = 'accounts.User' #유저 커스터마이징 하기위함
+
